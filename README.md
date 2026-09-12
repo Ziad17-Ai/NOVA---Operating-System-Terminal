@@ -2,7 +2,7 @@
 
 # ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
 
-# 🚀 NOVA TERMINAL OS
+# 🚀 NOVA - Operating System Terminal
 
 ### *A Fully-Featured Linux Terminal Emulator Running in Your Browser*
 
