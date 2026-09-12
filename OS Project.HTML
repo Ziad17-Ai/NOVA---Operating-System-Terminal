@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NOVA | Terminal OS</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Quick fix for reset button */
+        .window-controls i {
+            cursor: pointer;
+            margin-left: 12px;
+            transition: all 0.2s ease;
+        }
+        .window-controls i:hover {
+            color: #c084fc;
+            transform: scale(1.1);
+        }
+        .reset-term:hover {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HOME PAGE (LAUNCHER) -->
+    <div id="homePage" class="home-container">
+        <div class="bg-orb"></div>
+        <div class="bg-orb second"></div>
+        <div class="bg-orb third"></div>
+        <canvas id="particleCanvas"></canvas>
+
+        <div class="grid-overlay"></div>
+
+        <div class="hero-content">
+            <div class="glass-badge"><span class="badge-dot"></span> NOVA OS v2.0 — KERNEL READY</div>
+            <h1 class="glow-text">Terminal.<br><span class="accent-word">Redefined.</span></h1>
+            <p class="subtitle">A full-featured Linux command environment running live in your browser — no install, no setup, pure shell.</p>
+
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <i class="fas fa-terminal"></i>
+                    <div class="stat-info">
+                        <span class="stat-title">Bash Shell</span>
+                        <span class="stat-sub">POSIX compatible</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-folder-tree"></i>
+                    <div class="stat-info">
+                        <span class="stat-title">Virtual FS</span>
+                        <span class="stat-sub">Full directory tree</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bolt"></i>
+                    <div class="stat-info">
+                        <span class="stat-title">Instant Boot</span>
+                        <span class="stat-sub">Zero latency</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-row">
+                <button id="launchBtn" class="launch-btn">
+                    <i class="fas fa-power-off"></i> <span>Launch System</span>
+                </button>
+                <div class="cmd-hint"><span class="dollar">$</span> nova --boot --interactive</div>
+            </div>
+        </div>
+
+        <div class="floating-preview">
+            <div class="preview-window">
+                <div class="win-bar">
+                    <div class="win-dots-row">
+                        <span class="wdot red"></span>
+                        <span class="wdot yellow"></span>
+                        <span class="wdot green"></span>
+                    </div>
+                    <span class="win-title">nova ~ zsh</span>
+                </div>
+                <div class="win-body">
+                    <div class="win-line"><span class="prompt-green">nova@os</span><span class="prompt-white">:</span><span class="prompt-blue">~</span><span class="prompt-white">$</span> <span class="cmd-text">uname -a</span></div>
+                    <div class="win-output">Linux nova 6.1.0 #1 SMP x86_64 GNU/Linux</div>
+                    <div class="win-line mt8"><span class="prompt-green">nova@os</span><span class="prompt-white">:</span><span class="prompt-blue">~</span><span class="prompt-white">$</span> <span class="cmd-text">ls /home/nova</span></div>
+                    <div class="win-output"><span class="dir-color">documents</span>  <span class="dir-color">projects</span>  <span class="file-color">config.json</span>  <span class="file-color">welcome.txt</span></div>
+                    <div class="win-line mt8"><span class="prompt-green">nova@os</span><span class="prompt-white">:</span><span class="prompt-blue">~</span><span class="prompt-white">$</span> <span class="cmd-text blink-cursor">▋</span></div>
+                </div>
+            </div>
+
+            <div class="preview-side-stats">
+                <div class="side-stat"><span class="side-label">UPTIME</span><span class="side-val">4h 21m</span></div>
+                <div class="side-stat"><span class="side-label">SHELL</span><span class="side-val">zsh 5.9</span></div>
+                <div class="side-stat"><span class="side-label">KERNEL</span><span class="side-val">6.1.0</span></div>
+                <div class="side-stat"><span class="side-label">ARCH</span><span class="side-val">x86_64</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="boot-sequence">
+            <div class="boot-logo"><i class="fas fa-terminal"></i></div>
+            <div class="boot-lines" id="bootLines"></div>
+            <div class="loader-bar-wrap"><div class="loader-bar-fill" id="loaderBarFill"></div></div>
+        </div>
+    </div>
+
+    <!-- TERMINAL OS MAIN INTERFACE -->
+    <div id="terminalOS" class="terminal-os hidden">
+        <div class="os-backdrop"></div>
+
+        <!-- DOCK / TASKBAR -->
+        <div class="modern-dock">
+            <div class="dock-icon active" data-window="terminal"><i class="fas fa-terminal"></i><span>Console</span></div>
+            <div class="dock-icon" data-window="explorer"><i class="fas fa-folder-open"></i><span>Files</span></div>
+            <div class="dock-icon" data-window="calculator"><i class="fas fa-calculator"></i><span>Calc</span></div>
+            <div class="dock-icon" data-window="notes"><i class="fas fa-pen-nib"></i><span>Notes</span></div>
+            <div class="dock-icon" data-window="music"><i class="fas fa-headphones"></i><span>Wave</span></div>
+            <div class="dock-icon" data-window="settings"><i class="fas fa-sliders-h"></i><span>Settings</span></div>
+            <div class="dock-icon" id="resetSessionBtn"><i class="fas fa-sync-alt"></i><span>Reset</span></div>
+            <div class="dock-icon" id="exitToHome"><i class="fas fa-power-off"></i><span>Exit</span></div>
+        </div>
+
+        <!-- MAIN TERMINAL WINDOW -->
+        <div class="floating-terminal" id="mainTerminal">
+            <div class="terminal-header" id="dragHandle">
+                <div class="terminal-titlebar">
+                    <div class="titlebar-dots">
+                        <span class="tdot tdot-red"></span>
+                        <span class="tdot tdot-yellow"></span>
+                        <span class="tdot tdot-green"></span>
+                    </div>
+                    <div class="terminal-title">nova@os: ~ — bash</div>
+                </div>
+                <div class="window-controls">
+                    <i class="fas fa-sync-alt reset-term" id="resetTermBtn" title="Reset Session (Ctrl+R)"></i>
+                    <i class="fas fa-window-minimize minimize-term"></i>
+                    <i class="fas fa-times close-term" id="closeTermBtn"></i>
+                </div>
+            </div>
+            <div class="terminal-body" id="terminalBody">
+                <div class="output-area" id="outputArea">
+                    <div class="welcome-block">
+                        <pre class="ascii-art">
+ _   _  _____  _   _    _
+| \ | ||  _  || | | |  / \
+|  \| || | | || | | | / _ \
+| |\  || |/ / \ \_/ // ___ \
+|_| \_||___/   \___//_/   \_\</pre>
+                        <div class="welcome-info">
+                            <span class="wi-line"><span class="wi-key">OS</span><span class="wi-val">Nova Terminal 2.0.4</span></span>
+                            <span class="wi-line"><span class="wi-key">Shell</span><span class="wi-val">zsh 5.9 (interactive)</span></span>
+                            <span class="wi-line"><span class="wi-key">Kernel</span><span class="wi-val">Linux 6.1.0-x86_64</span></span>
+                            <span class="wi-line"><span class="wi-key">Tip</span><span class="wi-val">type <b>help</b> to list commands</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <span class="shell-prompt"><span class="sp-user">nova@os</span><span class="sp-sep">:</span><span class="sp-dir" id="promptDir">~</span><span class="sp-dollar">$</span></span>
+                    <input type="text" id="commandInput" autofocus spellcheck="false" placeholder="type a command...">
+                </div>
+            </div>
+        </div>
+
+        <!-- POPUP WIDGETS -->
+        <div id="widgetExplorer" class="glass-popup hidden">
+            <div class="popup-header"><span>File Explorer</span><i class="fas fa-times close-popup"></i></div>
+            <div class="popup-content" id="explorerContent"></div>
+        </div>
+        <div id="widgetCalculator" class="glass-popup hidden">
+            <div class="popup-header"><span>Calculator</span><i class="fas fa-times close-popup"></i></div>
+            <div id="calcDisplay" class="calc-display">0</div>
+            <div class="popup-content calc-grid"></div>
+        </div>
+        <div id="widgetNotes" class="glass-popup hidden">
+            <div class="popup-header"><span>Notes</span><i class="fas fa-times close-popup"></i></div>
+            <textarea id="notesArea" placeholder="Write anything..."></textarea>
+        </div>
+        <div id="widgetMusic" class="glass-popup hidden">
+            <div class="popup-header"><span>Wave Player</span><i class="fas fa-times close-popup"></i></div>
+            <div class="music-player"><i class="fas fa-play-circle"></i><p>Lofi Dreams — playing now</p></div>
+        </div>
+        <div id="widgetSettings" class="glass-popup hidden">
+            <div class="popup-header"><span>Preferences</span><i class="fas fa-times close-popup"></i></div>
+            <div class="settings-option"><label><input type="checkbox" id="themeToggle"> Dark Aurora (default)</label></div>
+            <div class="settings-option"><label>Terminal Glow: <input type="range" min="0" max="100"></label></div>
+        </div>
+
+        <!-- LIVE STATS BAR -->
+        <div class="stats-widget">
+            <div><i class="fas fa-microchip"></i> <span id="cpuStat">CPU: 12%</span></div>
+            <div><i class="fas fa-memory"></i> <span id="ramStat">RAM: 3.2GB</span></div>
+            <div><i class="far fa-clock"></i> <span id="liveClock">--:--:--</span></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
